@@ -55,6 +55,7 @@ models = Model.query.filter(Model.brand_name != "Chevrolet").all()
 
 # Fill in the following functions. (See directions for more info.)
 
+
 def get_model_info(year):
     '''Takes in a year, and prints out each model, brand_name, and brand
     headquarters for that year using only ONE database query.'''
@@ -64,27 +65,55 @@ def get_model_info(year):
     output = ""
 
     for model in models:
-        output += "%s, %s, %s \n" % (model.name, model.brand_name, model.brand.headquarters)
+        if model.brand:
+            output += "%s, %s, %s \n" % (model.name, model.brand_name, model.brand.headquarters)
 
     print output
-     
+
 
 def get_brands_summary():
     '''Prints out each brand name, and each model name for that brand
      using only ONE database query.'''
 
-    pass
+    brands = Brand.query.all()
+
+    output = ""
+
+    for brand in brands:
+        output += brand.name + ": \n"
+        for model in brand.models:
+            output += "\t" + model.name + "\n"
+
+    print output
+
+#Discussion Question 1: Brand.query.filter_by(name='Ford') just returns
+#the single query object and its location in the memory (I think?). 
+#If I added .one() or .first() it would return a single object that matches 
+#that query and if I added .all() it would return a list of objects.
+
+#Discussion Question 2: An association table does not keep track of any other
+#data, it just provides a link between two other tables and manages a 
+#many to many relationship.
 
 # -------------------------------------------------------------------
 
 
 # Part 2.5: Advanced and Optional
 def search_brands_by_name(mystr):
-    pass
+    """Take in a string and return a list of brands whose name contains the string"""
+
+    brands = Brand.query.filter(Brand.name.like('%' + mystr + '%')).all()
+
+    return brands
 
 
 def get_models_between(start_year, end_year):
-    pass
+    """Take in a start year and end year and return a list of models
+    with years between the two dates"""
+
+    models = Model.query.filter(Model.year > start_year, Model.year < end_year).all()
+
+    return models 
 
 # -------------------------------------------------------------------
 
